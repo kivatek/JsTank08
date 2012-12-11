@@ -33,6 +33,9 @@ var Tank = Class.create(Sprite, {
 		} else {
 			this.vx = this.vy = 0;
 
+			// 入力チェック前の向きを覚えておく。
+			var prevDirection = this.direction;
+
 			// 向き 0:下、1:左、2:右、3:上
 			if (game.input.left) {
 				this.direction = 1;
@@ -60,15 +63,17 @@ var Tank = Class.create(Sprite, {
 			} else if (game.input.b) {
 			}
 
+			if (prevDirection != this.direction) {
+				// 向きが変わる場合は使用する絵の番号を更新。
+				this.frame = this.direction * 6 + this.pattern;
+			}
+
 			if (this.vx) {
 				var x = this.x + (this.vx ? this.vx / Math.abs(this.vx) * 32 : 0);
 				var y = this.y + (this.vy ? this.vy / Math.abs(this.vy) * 32 : 0);
 				if (0 <= x && x < SCREEN_WIDTH && !background.hitTest(x, y)) {
 					this.isMoving = true;
 					arguments.callee.call(this);
-				} else {
-					// 移動できない場合はその場で向きを変える。
-					this.frame = this.direction * 6 + this.pattern;
 				}
 			}
 			if (this.vy) {
@@ -77,9 +82,6 @@ var Tank = Class.create(Sprite, {
 				if (0 <=y && y < SCREEN_HEIGHT && !background.hitTest(x, y)) {
 					this.isMoving = true;
 					arguments.callee.call(this);
-				} else {
-					// 移動できない場合はその場で向きを変える。
-					this.frame = this.direction * 6 + this.pattern;
 				}
 			}
 			if (this.isMoving) {
