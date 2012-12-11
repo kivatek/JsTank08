@@ -15,6 +15,9 @@ var Tank = Class.create(Sprite, {
 	initialize: function(type,direction){
 		Sprite.call(this, 32, 32);
 		this.image = game.assets['js/images/chara3.png'];
+		this.pattern = 0;
+		this.direction = direction;
+		this.isMoving = false;
 		this.cooldown = false;
 		if (type == TANKTYPE_PLAYER) {
 			// 緑色の戦車
