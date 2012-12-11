@@ -73,7 +73,6 @@ var Tank = Class.create(Sprite, {
 				var y = this.y + (this.vy ? this.vy / Math.abs(this.vy) * 32 : 0);
 				if (0 <= x && x < SCREEN_WIDTH && !background.hitTest(x, y)) {
 					this.isMoving = true;
-					arguments.callee.call(this);
 				}
 			}
 			if (this.vy) {
@@ -81,7 +80,6 @@ var Tank = Class.create(Sprite, {
 				var y = this.y + (this.vy ? this.vy / Math.abs(this.vy) * 32 : 0);
 				if (0 <=y && y < SCREEN_HEIGHT && !background.hitTest(x, y)) {
 					this.isMoving = true;
-					arguments.callee.call(this);
 				}
 			}
 			if (this.isMoving) {
