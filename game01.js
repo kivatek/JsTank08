@@ -12,8 +12,6 @@ var TANK_SPEED		= 8;
 var SHOT_SPEED		= 8;
 // 弾を連続で撃つことができないようにする間隔
 var INTERVAL_COOLDOWN			= 400;
-// 戦車の移動処理の実行間隔
-var INTERVAL_UPDATE_POSITION	= 40;
 
 var Tank = Class.create(Sprite, {
 	initialize: function(type,direction){
@@ -35,10 +33,7 @@ var Tank = Class.create(Sprite, {
 	},
 	updatePlayer: function() {
 		// 自分の戦車の情報を更新する関数
-		if (this.isMoving) {
-			// 移動処理は関数を分けたのでここでは何もしない。
-			// if判定の内容を変更した書き方はJsTank09で実施。
-		} else {
+		if (this.isMoving == false) {
 			// 移動方向を表す情報をクリアする。
 			this.vx = this.vy = 0;
 
@@ -91,28 +86,35 @@ var Tank = Class.create(Sprite, {
 				if (0 <= x && x < SCREEN_WIDTH && 0 <= y && y < SCREEN_HEIGHT && !background.hitTest(x, y)) {
 					// 一ブロック分移動した後の座標がステージの範囲内であれば移動処理を開始する。
 					this.isMoving = true;
-					this.updatePosition();
+					// Timeline機能を使って移動処理を行う。
+					this.tl
+						.moveTo(x, y, 4, enchant.Easing.LINEAR)
+						.and()
+						.then(function() {
+							// ４方向、３パターンのうちどのフレームを使うかを計算する。
+							this.pattern = (this.pattern + 1) % 3;
+							this.frame = this.direction * 6 + this.pattern;
+						})
+						.then(function() {
+							this.isMoving = false;
+						});
 				}
 			}
 		}
 	},
-	updatePosition: function() {
-		// 戦車の位置を更新する関数
-		this.moveBy(this.vx * TANK_SPEED, this.vy * TANK_SPEED);
-		// １ブロック分動いたかどうかを確認する。
-		if ((this.vx && this.x % 32 == 0) || (this.vy && this.y % 32 == 0)) {
-			this.isMoving = false;
-		} else {
-			// 続けて動く処理を行うようタスク登録を行う。
-			var timerTarget = this;
-			setTimeout( function(){
-				timerTarget.updatePosition();
-			}, INTERVAL_UPDATE_POSITION);
-		}
-		
-		// ４方向、３パターンのうちどのフレームを使うかを計算する。
-		this.pattern = (this.pattern + 1) % 3;
-		this.frame = this.direction * 6 + this.pattern;
+	doMove: function(x, y) {
+		// Timeline機能を使って移動処理を行う。
+		this.tl
+			.moveTo(x, y, 4, enchant.Easing.LINEAR)
+			.and()
+			.then(function() {
+				// ４方向、３パターンのうちどのフレームを使うかを計算する。
+				this.pattern = (this.pattern + 1) % 3;
+				this.frame = this.direction * 6 + this.pattern;
+			})
+			.then(function() {
+				this.isMoving = false;
+			});
 	}
 });
 
