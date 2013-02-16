@@ -86,18 +86,7 @@ var Tank = Class.create(Sprite, {
 				if (0 <= x && x < SCREEN_WIDTH && 0 <= y && y < SCREEN_HEIGHT && !background.hitTest(x, y)) {
 					// 一ブロック分移動した後の座標がステージの範囲内であれば移動処理を開始する。
 					this.isMoving = true;
-					// Timeline機能を使って移動処理を行う。
-					this.tl
-						.moveTo(x, y, 4, enchant.Easing.LINEAR)
-						.and()
-						.repeat(function() {
-							// ４方向、３パターンのうちどのフレームを使うかを計算する。
-							this.pattern = (this.pattern + 1) % 3;
-							this.frame = this.direction * 6 + this.pattern;
-						}, 4)
-						.then(function() {
-							this.isMoving = false;
-						});
+					this.doMove(x, y);
 				}
 			}
 		}
